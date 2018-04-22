@@ -24,9 +24,11 @@ public:
     LinkedList():first(0){};
     void PrintList();
     void Push_back(string sn,string sg);
+    void Push_front(string sn,string sg);
     void Delete(string sn);
     bool Search(string sn);
     bool IsEmpty();
+    void Clear();
 };
 
 void LinkedList::PrintList(){
@@ -66,6 +68,13 @@ void LinkedList::Push_back(string sn,string sg){
         current = current->next;
     }
     current->next = newNode;
+}
+
+void LinkedList::Push_front(string sn,string sg)
+{
+    ListNode *newnode = new ListNode(sn,sg);
+    newnode->next = first;
+    first = newnode;
 }
 
 void LinkedList::Delete(string sn){
@@ -112,6 +121,16 @@ bool LinkedList::IsEmpty()
     }
     else{return false;}
 }
+void LinkedList::Clear(){
+    while(first != 0)
+    {
+        ListNode *current = first;
+        first = first->next;
+        delete current;
+        current = 0;
+    }
+}
+
 LinkedList giftList;
 LinkedList naughtyList;
 
@@ -145,8 +164,11 @@ int main()
         switch(commandNum)
         {
         case 1:
+            giftList.Clear();
+            naughtyList.Clear();
             cin >>test;
-            while(test != 0)
+            //test = -1;
+            while(test != 0 && test >0)
             {
                 test_count += 1;
                 name = "";
@@ -156,11 +178,37 @@ int main()
                 if(giftList.Search(name) == true)
                 {
                     giftList.Delete(name);
-                    giftList.Push_back(name,gift);
+                    if(gift != "coal")
+                    {
+                        giftList.Push_back(name,gift);
+                    }
+                    else
+                    {
+                        if(naughtyList.Search(name)==true)
+                        {
+                            naughtyList.Delete(name);
+                            naughtyList.Push_front(name,"coal");
+                        }
+                        else{naughtyList.Push_front(name,"coal");}
+
+                    }
                 }
                 else
                 {
-                    giftList.Push_back(name,gift);
+                    if(gift != "coal")
+                    {
+                        giftList.Push_back(name,gift);
+                    }
+                    else
+                    {
+                        if(naughtyList.Search(name)==true)
+                        {
+                            naughtyList.Delete(name);
+                            naughtyList.Push_front(name,"coal");
+                        }
+                        else{naughtyList.Push_front(name,"coal");}
+
+                    }
                 }
                 //giftList.Push_back(name,gift);
                 /*if(test_count != 1)
@@ -175,26 +223,50 @@ int main()
             break;
         case 2:
             cin >>test;
-            while(test != 0)
+            while(test != 0 && test >0)
             {
                 name = "";
                 gift = "";
                 cin >> name;
                 cin >> gift;
-                if(giftList.Search(name) == true)
+                if(!giftList.Search(name))
                 {
                     //giftList.Delete(name);
-                    //giftList.Push_back(name,gift);
-                }
-                else
-                {
-                    giftList.Push_back(name,gift);
+
+                    if(gift != "coal")
+                    {
+                        giftList.Push_back(name,gift);
+                    }
+                    else
+                    {
+                        if(naughtyList.Search(name)==true)
+                        {
+                            naughtyList.Delete(name);
+                            naughtyList.Push_front(name,"coal");
+                        }
+                        else{naughtyList.Push_front(name,"coal");}
+                    }
+
                 }
 
-                if(naughtyList.Search(name) == true)
+                /*if(naughtyList.Search(name) == true)
                 {
                     naughtyList.Delete(name);
-                }
+                    if(gift != "coal")
+                    {
+                        giftList.Push_back(name,gift);
+                    }
+                    else
+                    {
+                        if(naughtyList.Search(name)==true)
+                        {
+                            naughtyList.Delete(name);
+                            naughtyList.Push_front(name,"coal");
+                        }
+                        else{naughtyList.Push_front(name,"coal");}
+                    }
+
+                }*/
                 //giftList.PrintList();
                 //cout << "->" ;
                 test = test -1;
@@ -203,7 +275,7 @@ int main()
             break;
         case 3:
             cin >>test;
-            while(test != 0)
+            while(test != 0&& test >0)
             {
                 name = "";
                 cin >> name;
@@ -219,6 +291,7 @@ int main()
                 {
                    naughtyList.Delete(name);
                    naughtyList.Push_back(name,"coal");
+                   //naughtyList.Push_back(name,"coal");
                 }
 
                 //giftList.PrintList();
@@ -227,7 +300,7 @@ int main()
             cin >> command;
             break;
         case 4:
-            if(giftList.IsEmpty() && naughtyList.IsEmpty() || (giftList.IsEmpty()))
+            if(giftList.IsEmpty() && naughtyList.IsEmpty())
             {
                 cout << "Empty" <<endl;
                 return 0;
@@ -242,12 +315,17 @@ int main()
         }
     }
     giftList.PrintList();
-    if(naughtyList.IsEmpty() == false)
+    if(naughtyList.IsEmpty() == false && giftList.IsEmpty() == false)
     {
         cout << "->" ;
         naughtyList.PrintList();
         cout <<endl;
 
+    }
+    else if(naughtyList.IsEmpty() == false && giftList.IsEmpty() == true)
+    {
+        naughtyList.PrintList();
+        cout <<endl;
     }
     else
     {
